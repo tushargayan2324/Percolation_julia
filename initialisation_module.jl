@@ -47,7 +47,7 @@ end
 
 function union_array_assigned(X,Y) #NOT A UNION LIKE SET!!!
     n = size(X)[1]+size(Y)[1]
-    M = zeros(Int, n)
+    M = zeros(Int64, n)
     for i=1:size(X)[1]
         M[i] = X[i]        
     end
@@ -56,6 +56,8 @@ function union_array_assigned(X,Y) #NOT A UNION LIKE SET!!!
     end
     return M
 end
+
+
 
 function union_array_push(X,Y)
     for i in Y
@@ -77,21 +79,53 @@ function del_element_first(arr, x)
     return arr    
 end
 
-function mod_num(x,n)
-    if x%n == 0
-        return n
-    else
-        return x%n
+
+function del_element_first_new(arr, x)
+    for i in arr
+        if i!=x
+            continue
+        end
+        deleteat!(arr, findfirst(==(i), arr))
     end
+
+    for i=1:size(arr)[1]
+        if arr[i]!=x
+            continue
+        else
+            
+        end
+
+    end
+
+
+    return arr    
+end
+
+
+# function mod_num(x,n)
+#     if x%n == 0
+#         return n
+#     else
+#         return x%n
+#     end
+# end
+
+
+# function y_coord(y,n)
+#     if y%n == 0
+#         return trunc(Int,y/n) - 1
+#     else
+#         return trunc(Int,y/n)
+#     end
+# end
+
+function x_coord(x,n)   # These elegant form suggested to me by @budbak
+    return (x-1)%n + 1    
 end
 
 
 function y_coord(y,n)
-    if y%n == 0
-        return trunc(Int,y/n) - 1
-    else
-        return trunc(Int,y/n)
-    end
+    return trunc(Int64, (y-1)/n) + 1    
 end
 
 
@@ -113,10 +147,12 @@ end
 
 function my_plot(f)
 	plt = scatter(0,0);
+    n = trunc(Int64,sqrt(size(f)[1]))
+
 	for obj in f
-    	x1 = mod_num(obj.site_id,n)
-    	y1 = 1+y_coord(obj.site_id,n)
-    		plt = scatter!((x1,y1), c=:glasbey_hv_n256,marker_z=obj.cluster_id, markersize=10,legend=false)#,axis=([], false))
+    	x1 = x_coord(obj.site_id,n)
+    	y1 = y_coord(obj.site_id,n)
+    		plt = scatter!((x1,y1), c=:glasbey_hv_n256,marker_z=sin(11*obj.cluster_id)^2, markersize=10,legend=false, cbar=false)#,axis=([], false))
     	for nei in obj.neighbours
         	    xs = [x1,mod_num(nei,n)]
         	    ys = [y1,1+y_coord(nei,n)]
@@ -129,9 +165,11 @@ end
 
 function my_plot_no_line(f)
 	plt = scatter(0,0);
+    n = trunc(Int64,sqrt(size(f)[1]))
+
 	for obj in f
-    	x1 = mod_num(obj.site_id,n)
-    	y1 = 1+y_coord(obj.site_id,n)
+    	x1 = x_coord(obj.site_id,n)
+    	y1 = y_coord(obj.site_id,n)
     		plt = scatter!((x1,y1), marker_z=obj.cluster_id, markersize=10,legend=false)#,axis=([], false))
 #    	for nei in obj.neighbours
 #        	    xs = [x1,mod_num(nei,n)]
