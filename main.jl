@@ -1,5 +1,6 @@
 include("initialisation_module.jl")
 using .initialise_module
+using StaticArrays
 
 function find_clusters(lat)  #OG name - find_clusters_new_algo_not_condi_optim_static_all  
     arr_sites = Array{Int64}([i for i=1:(size(lat)[1])])
