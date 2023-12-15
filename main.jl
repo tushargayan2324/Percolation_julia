@@ -2,51 +2,56 @@ include("initialisation_module.jl")
 using .initialise_module
 using StaticArrays
 
-function find_clusters(lat)  #OG name - find_clusters_new_algo_not_condi_optim_static_all  
+function find_clusters(lat) #latest algo from perc_algo_compare.jl
+
     arr_sites = Array{Int64}([i for i=1:(size(lat)[1])])
     cl_id = 0
+
     while length(arr_sites) != 0 
         cl_id += 1
                 
         start_site = arr_sites[1]
-        arr_sites = del_element_first(arr_sites, start_site)
+
+        deleteat!(arr_sites, 1) 
 
         lat[start_site].cluster_id = cl_id #set cl_id of first element in cluster list
-     
         
         track = size(lat[start_site].neighbours)[1] #tracking the length of neighbours set using this variable 
         
-        #neighbour_arr = lat[start_site].neighbours #initial neighbours 
-
         neighbour_arr = SVector{track,Int64}(lat[start_site].neighbours)
 
-        while track!=0 #terminate loop when can't find any viable next site for cluster
+        while track!=0      #terminate loop when can't find any viable next site for cluster
 
-            neighbours_set = Int64[] #next neighbour
+            neighbours_set = zeros(Int64, 2*size(neighbour_arr)[1]+4)
+
+            iter_track::Int64 = 0
 
             for obj in neighbour_arr
-                if lat[obj].cluster_id != 0
-                else 
-                    lat[obj].cluster_id = cl_id
-                    neighbours_set = union_array_push(neighbours_set, lat[obj].neighbours)
-                    #println(neighbours_set," ", track)
+                lat[obj].cluster_id = cl_id
+
+                
+                for nnn in lat[obj].neighbours
+                    
+                    if lat[nnn].cluster_id == 0 && !(nnn in neighbours_set)
+                            iter_track += 1
+
+                            neighbours_set[iter_track] = nnn
+                    end
                 end
 
-                arr_sites = del_element_first(arr_sites,obj)
-                #println(arr_sites)
-
-
-                #push!(neighbours_set, obj)
-                # println(obj)
-                
+                deleteat!(arr_sites, findfirst(==(obj), arr_sites))                
             end            
-            track = size(neighbours_set)[1]
             
+
+            deleteat!(neighbours_set, neighbours_set.==0)
+
+            track = size(neighbours_set)[1]
+
             neighbour_arr = SVector{track,Int64}(neighbours_set)
-            # neighbour_arr = neighbours_set
+   
         end
-        
-     end
+
+    end
     return lat
 end
 
