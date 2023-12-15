@@ -79,29 +79,6 @@ function del_element_first(arr, x)
     return arr    
 end
 
-
-function del_element_first_new(arr, x)
-    for i in arr
-        if i!=x
-            continue
-        end
-        deleteat!(arr, findfirst(==(i), arr))
-    end
-
-    for i=1:size(arr)[1]
-        if arr[i]!=x
-            continue
-        else
-            
-        end
-
-    end
-
-
-    return arr    
-end
-
-
 # function mod_num(x,n)
 #     if x%n == 0
 #         return n
